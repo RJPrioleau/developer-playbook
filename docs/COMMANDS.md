@@ -202,6 +202,203 @@ Lessons learned:
 
 ---
 
+## Locate an Installed Program
+### 🎯 Purpose
+Find the location of an installed program so it can be launched, configured, or troubleshooted.
+
+### ⚙️ What It Does
+Recursively searches a directory and its subdirectories for files that match a specified name or filter.
+
+### 🤔 Why It Matters
+Useful when you need to locate an executable, verify an installation, configure environment variables, or troubleshoot launcher issues without manually searching through folders.
+
+### 📌 Alias
+
+```powershell
+ls
+dir
+gci
+```
+
+These aliases execute the `Get-ChildItem` cmdlet.
+
+### 💻 Full Command
+
+```powershell
+Get-ChildItem
+```
+
+### 📖 General Pattern
+
+```powershell
+Get-ChildItem "<directory>" -Recurse -Filter "<filename>"
+```
+
+### 📝 Examples
+
+Locate the PyCharm executable.
+
+```powershell
+Get-ChildItem "C:\Program Files\JetBrains" -Recurse -Filter pycharm64.exe
+```
+
+Locate the PyCharm batch launcher.
+
+```powershell
+Get-ChildItem "C:\Program Files\JetBrains" -Recurse -Filter pycharm.bat
+```
+
+### 🔍 Breakdown
+
+**Get-ChildItem**
+
+Retrieves files and folders from a directory.
+
+**-Recurse**
+
+Searches all subdirectories beneath the specified directory.
+
+**-Filter**
+
+Limits the results to items matching the specified filename or pattern.
+
+**"<directory>"**
+
+The starting location for the search.
+
+**"<filename>"**
+
+The name (or pattern) of the file to locate.
+
+### ⚠️ Common Mistakes
+
+Searching the entire `C:\` drive when you already know the program's installation directory.
+
+Start with the most likely installation folder to improve performance.
+
+### 💡 Lo Notes
+
+This command was first documented while configuring the PyCharm launcher on both the Battle Station and the Surface Pro.
+
+Key lesson:
+
+Learn the reusable command pattern first, then remember the real-world example that led to it.
+
+## Change Directory
+
+### 🎯 Purpose
+
+Move from the current directory to another directory in PowerShell.
+
+### ⚙️ What It Does
+
+Changes the terminal's current working location to the specified folder.
+
+### 🤔 Why It Matters
+
+Useful for navigating between projects, folders, and repositories before running commands.
+
+### 📌 Alias
+
+```powershell
+cd
+```
+
+### 💻 Full Command
+
+```powershell
+Set-Location
+```
+
+### 📖 General Pattern
+
+```powershell
+Set-Location "<directory-path>"
+```
+
+### 📝 Examples
+
+Move to a specific project:
+
+```powershell
+cd C:\Users\ridin\PycharmProjects\developer-playbook
+```
+
+Move up one directory:
+
+```powershell
+cd ..
+```
+
+Move to the current user's home directory:
+
+```powershell
+cd ~
+```
+
+### 🔍 Breakdown
+
+**Set-Location**
+
+Changes the current working directory.
+
+**"<directory-path>"**
+
+The destination directory you want to move to.
+
+**..**
+
+Moves up one directory level.
+
+**~**
+
+Moves to the current user's home directory.
+
+**.**
+
+Represents the current directory.
+
+### ⚠️ Common Mistakes
+
+Using spaces in a directory path without surrounding the path in quotation marks.
+
+Example:
+
+```powershell
+cd "C:\Program Files\JetBrains"
+```
+
+instead of
+
+```powershell
+cd C:\Program Files\JetBrains
+```
+
+Another common mistake is forgetting where the current working directory is before running commands.
+
+Use:
+
+```powershell
+pwd
+```
+
+to verify your current location.
+
+### 🔗 Related Commands
+
+```powershell
+pwd
+ls
+ii
+Get-Location
+```
+
+### 💡 Lo Notes
+
+One of the most frequently used PowerShell commands during development.
+
+Used at the beginning of nearly every development session to navigate between repositories and project folders.
+
 # 🟨 Familiar Commands
 
 *(Commands move here as they become familiar.)*
