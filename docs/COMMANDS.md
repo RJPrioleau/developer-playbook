@@ -202,7 +202,7 @@ Lessons learned:
 
 ---
 
-## Locate an Installed Program
+## Locate an Installed Program (Get-ChildItem)
 ### 🎯 Purpose
 Find the location of an installed program so it can be launched, configured, or troubleshooted.
 
@@ -284,7 +284,7 @@ Key lesson:
 
 Learn the reusable command pattern first, then remember the real-world example that led to it.
 
-## Change Directory
+## Change Directory (Set-Location)
 
 ### 🎯 Purpose
 
@@ -399,6 +399,103 @@ One of the most frequently used PowerShell commands during development.
 
 Used at the beginning of nearly every development session to navigate between repositories and project folders.
 
+## Display Current Directory (Get-Location)
+
+### 🎯 Purpose
+
+Display the current working directory in the PowerShell terminal.
+
+### ⚙️ What It Does
+
+Shows the full path of the directory the terminal is currently operating in.
+
+### 🤔 Why It Matters
+
+Useful for confirming your current location before running commands that depend on the working directory, such as Git commands, Python scripts, or file operations.
+
+### 📌 Alias
+
+```powershell
+pwd
+```
+
+### 💻 Full Command
+
+```powershell
+Get-Location
+```
+
+### 📖 General Pattern
+
+```powershell
+Get-Location
+```
+
+### 📝 Examples
+
+Display the current directory.
+
+```powershell
+pwd
+```
+
+Example Output
+
+```text
+Path
+----
+C:\Users\ridin\PycharmProjects\developer-playbook
+```
+
+### 🔍 Breakdown
+
+**Get-Location**
+
+Returns the current working directory.
+
+**pwd**
+
+PowerShell alias for `Get-Location`.
+
+The returned path represents where commands are currently being executed.
+
+### ⚠️ Common Mistakes
+
+Assuming you are in the correct directory before running commands.
+
+Always verify your location with:
+
+```powershell
+pwd
+```
+
+before running commands such as:
+
+```powershell
+git add .
+
+python app.py
+```
+
+Running commands from the wrong directory is a common cause of errors.
+
+### 🔗 Related Commands
+
+```powershell
+cd
+ls
+ii
+Get-ChildItem
+```
+
+### 💡 Lo Notes
+
+One of the first commands to run whenever a terminal behaves unexpectedly.
+
+If Git, Python, or another command isn't finding files, verify the current working directory before troubleshooting anything else.
+
+
+---
 # 🟨 Familiar Commands
 
 *(Commands move here as they become familiar.)*
