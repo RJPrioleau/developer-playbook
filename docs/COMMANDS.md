@@ -1036,6 +1036,295 @@ Use the commands together instead of relying on the GUI to search, scroll, and l
 
 This workflow improves both PowerShell repetition and familiarity with the project structure.
 ---
+## Run a Python Function from PowerShell
+
+### Purpose
+
+Import and run a Python function directly from PowerShell without creating a
+temporary script or launching the full application.
+
+---
+
+### Alias
+
+None
+
+---
+
+### Full Command
+
+```powershell
+python -c "from analysis.what_if_engine import run_weight_simulation; from analysis.indicator_weights import INDICATOR_WEIGHTS; engine_config = INDICATOR_WEIGHTS.copy(); engine_config['hit_rate'] = 2; run_weight_simulation(engine_config)"
+```
+
+---
+
+### General Pattern
+
+```powershell
+python -c "from <module> import <function>; <setup>; <function>(<arguments>)"
+```
+
+---
+
+### Example
+
+Run this from the root of the `prizepicks-value-dashboard` repository:
+
+```powershell
+python -c "from analysis.what_if_engine import run_weight_simulation; from analysis.indicator_weights import INDICATOR_WEIGHTS; engine_config = INDICATOR_WEIGHTS.copy(); engine_config['hit_rate'] = 2; run_weight_simulation(engine_config)"
+```
+
+If the virtual environment is not activated, call the project interpreter directly.
+
+```powershell
+.\venv\Scripts\python.exe -c "from analysis.what_if_engine import run_weight_simulation; from analysis.indicator_weights import INDICATOR_WEIGHTS; engine_config = INDICATOR_WEIGHTS.copy(); engine_config['hit_rate'] = 2; run_weight_simulation(engine_config)"
+```
+
+---
+
+### Breakdown
+
+`python -c`
+
+Runs the Python code supplied as the next command-line argument.
+
+`from analysis.what_if_engine import run_weight_simulation`
+
+Imports the What-If Engine's development entry point.
+
+`from analysis.indicator_weights import INDICATOR_WEIGHTS`
+
+Imports the production weights as the starting configuration.
+
+`engine_config = INDICATOR_WEIGHTS.copy()`
+
+Creates a separate dictionary so the simulation can change values without
+modifying the imported production dictionary.
+
+`engine_config['hit_rate'] = 2`
+
+Changes only the simulated hit-rate weight.
+
+`run_weight_simulation(engine_config)`
+
+Runs the comparison and historical replay with the simulated values.
+
+The outer code string uses double quotes, so the Python dictionary key can use
+single quotes without ending the PowerShell argument.
+
+---
+
+### Requirements
+
+- Run from the `prizepicks-value-dashboard` repository root so project imports resolve consistently and relative file paths, including
+  `paper_bets.csv`, point to the expected location.
+- Use the project's virtual environment, so required packages are available.
+- Pass a complete weight dictionary because the recommendation engine accesses
+  every required weight by name.
+
+---
+
+### Common Mistakes
+
+- Running from the wrong directory and receiving an import or missing-file error.
+- Using `python` when it is not configured in the Windows PATH. Use
+  `.\venv\Scripts\python.exe` instead.
+- Omitting `.copy()` and unintentionally changing the imported dictionary during
+  an interactive Python session.
+- Mixing the outer double quotes and inner single quotes incorrectly.
+- Passing only `{'hit_rate': 2}` instead of a complete weight dictionary.
+
+---
+
+### When I Use It
+
+- Running the What-If Engine during development.
+- Testing one function without launching the full application.
+- Trying a configuration change and inspecting its terminal output.
+- Interrogating application behavior from PowerShell.
+
+---
+
+### Related Commands
+
+```powershell
+pwd
+cd
+python
+.\venv\Scripts\python.exe
+```
+
+---
+
+### Lo Notes
+
+This command established a reusable pattern for running project functions from
+PowerShell. The lesson is not to memorize the entire line, but to recognize the
+pattern: select the correct interpreter, use `-c`, import what is needed, prepare
+the inputs, and call the function.
+
+---
+
+## Run Multiline Python from PowerShell
+
+### Purpose
+
+Run several lines of Python from PowerShell without compressing the code into
+one hard-to-read `python -c "..."` command or creating a temporary `.py` file.
+
+Use this technique when:
+
+- The one-line `python -c "..."` command is becoming hard to read.
+- You need several imports and setup steps.
+- You want to test a function directly.
+- You do not want to create a temporary script.
+- You want to practice both PowerShell and Python execution.
+
+---
+
+### General Pattern
+
+```powershell
+$code = @'
+<multiline Python code>
+'@
+
+python -c $code
+```
+
+If the virtual environment is not activated:
+
+```powershell
+.\venv\Scripts\python.exe -c $code
+```
+
+---
+
+### What a Here-String Is
+
+A PowerShell here-string stores multiline text in a variable while preserving
+the line breaks. The opening and closing markers must be placed on their own
+lines.
+
+A single-quoted here-string treats its contents as literal text:
+
+```powershell
+$text = @'
+PowerShell does not expand $variables inside this form.
+'@
+```
+
+A double-quoted here-string allows PowerShell variable expansion:
+
+```powershell
+$name = "PrizePicks"
+
+$text = @"
+PowerShell expands $name inside this form.
+"@
+```
+
+The single-quoted form is usually safer for embedded Python because PowerShell
+does not try to expand Python text that resembles a PowerShell variable.
+
+---
+
+### What-If Engine Example
+
+Run this from the root of the `prizepicks-value-dashboard` repository with its
+virtual environment activated:
+
+```powershell
+$code = @'
+from analysis.what_if_engine import run_weight_simulation
+from analysis.indicator_weights import INDICATOR_WEIGHTS
+
+engine_config = {
+    'indicator_weights': INDICATOR_WEIGHTS.copy()
+}
+
+engine_config['indicator_weights']['hit_rate'] = 2
+
+run_weight_simulation(engine_config)
+'@
+
+python -c $code
+```
+
+This is still a direct `python -c` execution. The difference is that the Python
+program is stored in `$code` first, which makes its imports, setup, and function
+call easier to read and modify.
+
+---
+
+### Quote-Handling Issue We Discovered
+
+The first version used double quotes for the Python dictionary keys:
+
+```python
+engine_config = {
+    "indicator_weights": INDICATOR_WEIGHTS.copy()
+}
+```
+
+When the `$code` variable was passed from Windows PowerShell to Python, the
+embedded double quotes were not preserved as expected. Python received the key
+as an unquoted name and raised:
+
+```text
+NameError: name 'indicator_weights' is not defined
+```
+
+Using single quotes for Python string values inside the here-string preserved
+the keys correctly:
+
+```python
+engine_config = {
+    'indicator_weights': INDICATOR_WEIGHTS.copy()
+}
+```
+
+This was a PowerShell-to-native-command argument-quoting issue, not a problem
+with the What-If Engine or Python dictionaries.
+
+---
+
+### When to Use It
+
+- Testing a focused function with several imports or setup statements.
+- Trying a small configuration without creating a permanent script.
+- Turning a difficult-to-read one-line `python -c` command into readable Python.
+- Investigating application behavior from PowerShell.
+- Running a short experiment that does not need to be saved or reused by the
+  project.
+
+---
+
+### When a Real `.py` Script Is More Appropriate
+
+Create a real Python script when:
+
+- The code will be reused regularly or shared with someone else.
+- The command needs arguments, validation, error handling, or documentation.
+- The experiment is becoming long or contains several functions.
+- The behavior should be tested or tracked in Git.
+- The command is becoming an official project entry point or development tool.
+
+A here-string is useful for temporary interrogation. A `.py` file is better
+when the code becomes part of the project.
+
+---
+
+### Lo Notes
+
+This technique was learned while verifying the structured configuration for the
+PrizePicks What-If Engine. It made a multi-step Python command easier to read,
+and the initial `NameError` demonstrated that shell quoting can change code
+before Python receives it.
+
+---
+
 # 🟨 Familiar Commands
 
 *(Commands move here as they become familiar.)*
