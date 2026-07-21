@@ -1,4 +1,19 @@
-# WORKSTATION_SETUP.md
+# Workstation Status
+
+| Component | Status |
+|-----------|--------|
+| Folder Structure | ✅ |
+| Git | ✅ |
+| Python | ✅ |
+| pip | ✅ |
+| GitHub CLI | ✅ |
+| PyCharm | ✅ |
+| PATH | ✅ |
+| Git Authentication | ✅ |
+| Final Validation | ✅ |
+
+---
+
 
 ## 🎯 Purpose
 
@@ -93,6 +108,28 @@ git --version
 
 ---
 
+## GitHub CLI
+
+- [ ] Installed
+
+### Verification
+
+```powershell
+gh --version
+```
+
+### Notes
+
+Used for:
+
+- Repository creation
+- Repository cloning
+- Authentication
+- Pull requests
+- Releases
+
+---
+
 ## Python
 
 - [ ] Installed
@@ -101,6 +138,8 @@ git --version
 
 ```powershell
 python --version
+py --version
+pip --version
 ```
 
 ### Notes
@@ -163,6 +202,48 @@ git config --list
 
 ---
 
+## Inspect User PATH
+
+- [ ] Complete
+
+Before changing the PATH variable:
+
+```powershell
+([Environment]::GetEnvironmentVariable("Path", "User") -split ";") |
+    ForEach-Object { "'$_'" }
+```
+
+### Notes
+
+---
+
+## Backup User PATH
+
+- [ ] Complete
+
+Before modifying the PATH variable:
+
+```powershell
+[Environment]::GetEnvironmentVariable("Path", "User") |
+    Out-File "$([Environment]::GetFolderPath('Desktop'))\UserPath_Backup.txt"
+```
+
+### Verification
+
+```powershell
+Test-Path "$([Environment]::GetFolderPath('Desktop'))\UserPath_Backup.txt"
+```
+
+Expected Result:
+
+```text
+True
+```
+
+### Notes
+
+---
+
 ## Environment Variables (PATH)
 
 - [ ] Complete
@@ -190,10 +271,16 @@ Expected Result:
 
 ### Verification
 
-Clone any GitHub repository.
+Authenticate using GitHub CLI.
 
 ```powershell
-git clone <repository-url>
+gh auth login
+```
+
+Then verify access by cloning a repository.
+
+```powershell
+gh repo clone owner/repository
 ```
 
 Expected Result:
@@ -207,6 +294,7 @@ Repository clones successfully without authentication errors.
 # Phase 4 - Final Workstation Validation
 
 - [ ] Git operational
+- [ ] GitHub CLI operational
 - [ ] Python operational
 - [ ] pip operational
 - [ ] PyCharm launcher operational
@@ -214,14 +302,84 @@ Repository clones successfully without authentication errors.
 - [ ] Able to clone repositories
 - [ ] Able to open repositories in PyCharm
 
+## Verification
+
+Run:
+
+```powershell
+python --version
+py --version
+pip --version
+git --version
+gh --version
+pycharm64.exe .
+```
+
+Expected Result:
+
+- All commands execute successfully.
+- PyCharm launches and opens the current directory as a project.
+
 ---
 
-# Phase 5 - Lessons Learned
+# Phase 5 - Machine Notes
 
-Document any workstation-specific issues or discoveries made during setup.
+Document workstation-specific details, issues, and discoveries made during setup. Every computer develops its own configuration quirks.
 
-### Example
+## Battle Station
 
-- Surface Pro required adding the PyCharm 2026.1.2 `bin` directory to the Windows PATH.
-- Battle Station required adding the PyCharm 2023.3.4 `bin` directory to the Windows PATH.
+**Operating System:** Windows 11
+
+**Python:** 3.14.6
+
+**PyCharm:**
+
+- 2023.3.4
+
+**Desktop:**
+
+- Redirected to OneDrive
+
+**PATH:**
+
+- Includes the PyCharm `bin` directory
+- Includes Python 3.14
+- Includes Python Scripts
+
+**Notes:**
+
+- GitHub CLI installed
+
+## Surface Pro
+
+**Processor:** ARM
+
+**PyCharm:**
+
+- 2026.1.2
+
+**PATH:**
+
+- Includes the PyCharm `bin` directory
+
+**Notes:**
+
+- Uses a different PATH configuration than Battle Station
+
+## General Notes
+
 - Avoid using `setx PATH "$env:Path"` because long PATH variables may be truncated.
+
+---
+
+# Recovery
+
+Recovery steps should be performed in order. Do not skip verification between steps.
+
+If something breaks:
+
+1. Verify PATH.
+2. Verify Python.
+3. Verify Git.
+4. Verify GitHub CLI.
+5. Restore the PATH backup if necessary.
