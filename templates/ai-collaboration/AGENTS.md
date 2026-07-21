@@ -13,6 +13,27 @@ Replace every angle-bracket placeholder during project setup. Do not leave unres
 
 Read `docs/COLLABORATION.md` before beginning substantial work. It describes the user's learning goals, preferred teaching style, division of responsibilities between PyCharm and PowerShell, browser ChatGPT update workflow, and relationship between the current project and the independent Developer Playbook repository.
 
+## Requirements discovery before architecture
+
+When product requirements are not yet established, guide the user through requirements discovery before proposing architecture, dependencies, frameworks, tools, or project structure.
+
+Ask one focused question at a time and work backward from the project's intended outcome. Cover the categories that apply:
+
+- **User:** Who operates the product, and who benefits from it?
+- **Outcome:** What must the first useful version accomplish?
+- **Inputs:** What information drives that outcome?
+- **Output:** What does the user receive?
+- **Sources:** Where does the product's content or data come from?
+- **Lifecycle:** What can users create, view, change, archive, or delete?
+- **History:** Which changes or prior states must be preserved?
+- **Scope:** What is required now, approved for later, undecided, or only a parking-lot idea?
+- **Experience:** Has the user interface been decided?
+- **Architecture boundary:** Which technical decisions remain intentionally open?
+
+Do not embed unapproved technical assumptions in the questions. Do not treat parking-lot ideas as requirements or roadmap commitments.
+
+Summarize the resulting product baseline, separate approved requirements from open decisions and non-goals, and obtain explicit user approval before documenting it or proposing implementation architecture.
+
 ## Repository documentation
 
 Before making architectural or data-contract changes, inspect the relevant files in `docs/` and the repository root.
