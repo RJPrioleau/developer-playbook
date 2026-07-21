@@ -29,6 +29,29 @@ The objective is to eliminate guesswork and create consistency across every soft
 
 ---
 
+## Start a Guided Project Setup
+
+Use this option when you want an AI assistant to guide you through the checklist
+and explain the terminal commands as you run them.
+
+### Step 1 - Open the Developer Playbook
+
+Before starting the conversation, make sure `developer-playbook` is open as the
+current project in PyCharm. This gives the AI assistant access to this checklist
+and the reusable AI collaboration templates.
+
+### Step 2 - Send the Starting Prompt
+
+```text
+Read docs/PROJECT_CHECKLIST.md. Help me create a new project using the checklist, including the reusable AI collaboration templates. Teach me as we go.
+```
+
+The assistant should gather the new project's details before creating anything,
+guide you through one verified phase at a time, and explain what each command
+does rather than assuming you already know it.
+
+---
+
 # Workflow 1 - Create a New Project
 
 ---
