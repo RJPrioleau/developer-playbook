@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 
-Last Updated: 2026-07-07
+Last Updated: 2026-07-21
 
 > **Personal Software Development Command Reference**
 >
@@ -62,6 +62,181 @@ Learning both the alias and the full cmdlet makes it easier to:
 ---
 
 # 🔥 Currently Learning
+
+---
+
+## Create and Connect a GitHub Repository (gh repo create)
+
+### Purpose
+
+Create a GitHub repository from an existing local Git repository and configure
+the local `origin` remote without using the GitHub website.
+
+---
+
+### Alias
+
+None
+
+---
+
+### Full Command
+
+```powershell
+gh repo create <project-name> --private --source=. --remote=origin
+```
+
+Use `--public` instead of `--private` when the repository should be publicly
+visible.
+
+---
+
+### General Pattern
+
+Run these commands from the new project directory:
+
+```powershell
+git init -b main
+gh auth status
+gh repo create <project-name> <visibility-flag> --source=. --remote=origin
+```
+
+Replace `<visibility-flag>` with either `--private` or `--public`.
+
+Create the initial commit, then publish it:
+
+```powershell
+git push -u origin main
+```
+
+---
+
+### Real-World Example
+
+Create the public Recipe Dashboard repository from its empty local Git
+repository:
+
+```powershell
+gh repo create recipe-dashboard --public --source=. --remote=origin
+```
+
+The successful command created:
+
+```text
+https://github.com/RJPrioleau/recipe-dashboard
+```
+
+It also added this local remote:
+
+```text
+origin  https://github.com/RJPrioleau/recipe-dashboard.git
+```
+
+---
+
+### Breakdown
+
+`gh repo create <project-name>`
+
+Creates a new repository under the active GitHub account.
+
+`--private` or `--public`
+
+Sets the GitHub repository's visibility.
+
+`--source=.`
+
+Uses the current local Git repository as the source. The `.` represents the
+current directory.
+
+`--remote=origin`
+
+Adds the created GitHub repository as the local remote named `origin`.
+
+`git push -u origin main`
+
+Publishes the first commit and configures local `main` to track `origin/main`.
+Afterward, later pushes can normally use `git push`.
+
+---
+
+### Verification
+
+Confirm GitHub CLI authentication before creating the repository:
+
+```powershell
+gh auth status
+```
+
+Confirm the local fetch and push URLs:
+
+```powershell
+git remote -v
+```
+
+Confirm the repository identity, visibility, and URL on GitHub:
+
+```powershell
+gh repo view --json nameWithOwner,visibility,url
+```
+
+After the first push, confirm the default branch:
+
+```powershell
+gh repo view --json nameWithOwner,visibility,defaultBranchRef
+```
+
+Confirm the local branch is synchronized:
+
+```powershell
+git status
+```
+
+---
+
+### Common Mistakes
+
+- Running the command outside the intended local repository.
+- Selecting `--public` when the repository should be private, or the reverse.
+- Omitting `--source=.` and failing to associate the current repository.
+- Omitting `--remote=origin` and leaving the local repository without a remote.
+- Including `--push` before an initial commit exists.
+- Running `git push` before upstream tracking exists. Use
+  `git push -u origin main` for the first push.
+- Copying the PowerShell prompt text, such as `PS C:\...>`, as part of a command.
+- Sharing the authentication token printed by `gh auth status`. Redact the token
+  before sharing terminal output.
+
+---
+
+### When I Use It
+
+- Starting a new repository entirely from PowerShell.
+- Creating and connecting GitHub without using the website.
+- Choosing repository visibility explicitly during project setup.
+- Verifying the local-to-remote connection before the first commit is pushed.
+
+---
+
+### Related Commands
+
+```powershell
+gh --version
+gh auth status
+git init -b main
+git remote -v
+git push -u origin main
+git status
+```
+
+---
+
+### Lo Notes
+
+This workflow was verified while creating `recipe-dashboard`. The main lesson
+is that `gh repo create` can create the GitHub repository and configure the
+local remote in one command. The first commit is still created with Git, and
+the first push uses `-u` to establish upstream tracking.
 
 ---
 

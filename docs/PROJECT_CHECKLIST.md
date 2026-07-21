@@ -4,7 +4,8 @@
 
 Provide a repeatable checklist for creating a new Python software project from scratch.
 
-The goal is to ensure every project begins with a consistent structure, isolated environment, dependency management, documentation, and Git workflow.
+The goal is to ensure every project begins with a consistent structure, isolated environment, dependency management,
+documentation, and Git workflow.
 
 ---
 
@@ -90,7 +91,7 @@ Confirm PowerShell is inside the new project directory.
 
 # Phase 2 - Initialize Git
 
-## Create Git Repository
+## Method 1 - Create a Local Git Repository
 
 - [ ] Repository initialized
 
@@ -112,6 +113,93 @@ Git reports that the current directory is now a Git repository.
 
 ### Notes
 
+## Method 2 - Create and Connect a GitHub Repository with GitHub CLI
+
+Use this method when the project should begin with both a local Git repository and a connected GitHub repository.
+
+- [ ] GitHub CLI available
+- [ ] GitHub authentication verified
+- [ ] Local Git repository initialized
+- [ ] GitHub repository created
+- [ ] `origin` remote added
+- [ ] Repository identity and visibility verified
+
+### Step 1 - Verify GitHub CLI
+
+```powershell
+gh --version
+```
+
+This confirms that GitHub CLI is installed and available through `PATH`.
+
+### Step 2 - Verify GitHub Authentication
+
+```powershell
+gh auth status
+```
+
+Confirm the intended GitHub account is active and the token includes the `repo` scope. Never share an unmasked
+authentication token.
+
+### Step 3 - Initialize the Local Repository
+
+```powershell
+git init -b main
+```
+
+The `-b main` option explicitly names the initial branch `main`.
+
+### Step 4 - Create and Connect the GitHub Repository
+
+#### Private Repository
+
+```powershell
+gh repo create <project-name> --private --source=. --remote=origin
+```
+
+#### Public Repository
+
+```powershell
+gh repo create <project-name> --public --source=. --remote=origin
+```
+
+#### Real-World Example
+
+```powershell
+gh repo create recipe-dashboard --public --source=. --remote=origin
+```
+
+Command breakdown:
+
+- `gh repo create <project-name>` creates the repository under the active GitHub account.
+- `--private` or `--public` sets repository visibility.
+- `--source=.` identifies the current local Git repository as the source.
+- `--remote=origin` adds the new GitHub repository as the conventional `origin` remote.
+
+Do not include `--push` before the initial commit exists.
+
+### Step 5 - Verify the Local Remote
+
+```powershell
+git remote -v
+```
+
+Confirm that both fetch and push URLs for `origin` point to the intended GitHub repository.
+
+### Step 6 - Verify GitHub Repository Metadata
+
+```powershell
+gh repo view --json nameWithOwner,visibility,url
+```
+
+Confirm the repository owner, name, visibility, and URL.
+
+### Notes
+
+Choose either Method 1 or Method 2. Do not initialize the same local repository twice.
+
+Method 2 was verified while creating the public
+`RJPrioleau/recipe-dashboard` repository from an empty local Git repository.
 ---
 
 # Phase 3 - Create the Virtual Environment
@@ -343,9 +431,11 @@ New-Item CHANGELOG.md
 - [ ] Project placeholders replaced
 - [ ] Collaboration files verified
 
-These files preserve the established AI collaboration, teaching, machine-switch, and session-handoff workflows in every new project.
+These files preserve the established AI collaboration, teaching, machine-switch, and session-handoff workflows in every
+new project.
 
-Run the following commands from the **new project's root directory**. This procedure assumes the new project and `developer-playbook` are sibling directories inside the same `PycharmProjects` directory.
+Run the following commands from the **new project's root directory**. This procedure assumes the new project and
+`developer-playbook` are sibling directories inside the same `PycharmProjects` directory.
 
 Expected starting layout:
 
@@ -361,7 +451,8 @@ PycharmProjects/
 Get-Location
 ```
 
-Confirm the displayed path ends with the new project's directory name. Do not run the copy commands from inside `developer-playbook`.
+Confirm the displayed path ends with the new project's directory name. Do not run the copy commands from inside
+`developer-playbook`.
 
 ### Step 2 - Locate and Synchronize the Developer Playbook
 
@@ -382,7 +473,8 @@ Expected Git result:
 Already up to date.
 ```
 
-If `Resolve-Path` reports that the path does not exist, the repositories are not siblings. Set the path explicitly instead:
+If `Resolve-Path` reports that the path does not exist, the repositories are not siblings. Set the path explicitly
+instead:
 
 ```powershell
 $playbookRoot = 'C:\Users\<username>\PycharmProjects\developer-playbook'
@@ -403,7 +495,8 @@ Both commands should return:
 False
 ```
 
-If either command returns `True`, stop and inspect that file. Do not overwrite an existing project's instructions or handoff history with a fresh template.
+If either command returns `True`, stop and inspect that file. Do not overwrite an existing project's instructions or
+handoff history with a fresh template.
 
 ### Step 4 - Create the Documentation Directory
 
@@ -411,7 +504,8 @@ If either command returns `True`, stop and inspect that file. Do not overwrite a
 New-Item -ItemType Directory -Path '.\docs' -Force
 ```
 
-`-Force` makes this safe when the `docs` directory already exists. It does not delete or replace files inside the directory.
+`-Force` makes this safe when the `docs` directory already exists. It does not delete or replace files inside the
+directory.
 
 ### Step 5 - Copy Both Templates
 
@@ -419,6 +513,19 @@ New-Item -ItemType Directory -Path '.\docs' -Force
 Copy-Item -LiteralPath (Join-Path $playbookRoot 'templates\ai-collaboration\AGENTS.md') -Destination '.\AGENTS.md'
 Copy-Item -LiteralPath (Join-Path $playbookRoot 'templates\ai-collaboration\COLLABORATION.md') -Destination '.\docs\COLLABORATION.md'
 ```
+
+#### Verify Copy Integrity
+
+```powershell
+Get-FileHash -LiteralPath (Join-Path $playbookRoot 'templates\ai-collaboration\AGENTS.md'), '.\AGENTS.md'
+Get-FileHash -LiteralPath (Join-Path $playbookRoot 'templates\ai-collaboration\COLLABORATION.md'), '.\docs\COLLABORATION.md'
+```
+
+Each source-and-destination pair must report the same SHA-256 hash. Matching hashes prove that the intended template was
+copied without modification.
+
+If a pair does not match, inspect the source and destination before continuing. Do not customize or commit the files
+until both copies are verified.
 
 The resulting project layout should include:
 
@@ -429,24 +536,27 @@ The resulting project layout should include:
     └── COLLABORATION.md
 ```
 
-The files are copied, not linked. Each project keeps its own instructions, project-specific decisions, and continuity history.
+The files are copied, not linked. Each project keeps its own instructions, project-specific decisions, and continuity
+history.
 
 ### Step 6 - Replace the AGENTS.md Placeholders
 
 Open the new project's `AGENTS.md` in PyCharm. Replace every angle-bracket placeholder as follows:
 
-| Placeholder | Replace it with | Example |
-|---|---|---|
-| `<PROJECT_NAME>` | The human-readable project name | `Expense Tracker` |
-| `<ONE_SENTENCE_PROJECT_PURPOSE>` | One sentence describing what the project is intended to do | `Build a local application for recording and reviewing personal expenses.` |
-| `<PRIMARY_RUN_COMMAND>` | The normal PowerShell command used to start the project | `python app.py` |
-| `<PRIMARY_VERIFICATION_COMMAND>` | The normal command used to run the project's main test or verification suite | `python -m pytest` |
-| `<OPTIONAL_PROJECT_DOCUMENTATION>` | A real project-specific document and its purpose, or delete the entire bullet when none exists | `docs/data_dictionary.md — field definitions and data contracts.` |
-| `<PROJECT_SPECIFIC_INSTRUCTION_OR_REMOVE_THIS_LINE>` | A durable rule unique to this repository, or delete the bullet when none has been established | `Keep database migrations backward compatible.` |
+| Placeholder                                          | Replace it with                                                                                | Example                                                                    |
+|------------------------------------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| `<PROJECT_NAME>`                                     | The human-readable project name                                                                | `Expense Tracker`                                                          |
+| `<ONE_SENTENCE_PROJECT_PURPOSE>`                     | One sentence describing what the project is intended to do                                     | `Build a local application for recording and reviewing personal expenses.` |
+| `<PRIMARY_RUN_COMMAND>`                              | The normal PowerShell command used to start the project                                        | `python app.py`                                                            |
+| `<PRIMARY_VERIFICATION_COMMAND>`                     | The normal command used to run the project's main test or verification suite                   | `python -m pytest`                                                         |
+| `<OPTIONAL_PROJECT_DOCUMENTATION>`                   | A real project-specific document and its purpose, or delete the entire bullet when none exists | `docs/data_dictionary.md — field definitions and data contracts.`          |
+| `<PROJECT_SPECIFIC_INSTRUCTION_OR_REMOVE_THIS_LINE>` | A durable rule unique to this repository, or delete the bullet when none has been established  | `Keep database migrations backward compatible.`                            |
 
-If the run or verification command has not been established yet, replace the placeholder with `Not established yet` rather than guessing or leaving the placeholder unresolved. Update it when the real command is proven.
+If the run or verification command has not been established yet, replace the placeholder with `Not established yet`
+rather than guessing or leaving the placeholder unresolved. Update it when the real command is proven.
 
-Do not add speculative project rules. Add project-specific instructions only when the project creates a real need for them.
+Do not add speculative project rules. Add project-specific instructions only when the project creates a real need for
+them.
 
 `docs/COLLABORATION.md` contains reusable workflow standards and normally requires no project-specific editing.
 
@@ -464,7 +574,8 @@ Expected results:
 - `Select-String` produces no output, confirming no template placeholders remain.
 - `git status --short` lists `AGENTS.md` and `docs/` as new project files.
 
-Read the customized `AGENTS.md` once before the initial commit. Confirm that its project name, purpose, commands, documentation links, and project-specific instructions are accurate.
+Read the customized `AGENTS.md` once before the initial commit. Confirm that its project name, purpose, commands,
+documentation links, and project-specific instructions are accurate.
 
 ---
 
@@ -511,6 +622,18 @@ Avoid creating unnecessary directories "just in case."
 ```powershell
 git add .
 git commit -m "Initialize project structure"
+```
+
+### First Push After GitHub CLI Repository Creation
+
+```powershell
+git push -u origin main
+```
+
+The first push publishes `main` and sets `origin/main` as its upstream branch. After upstream tracking exists, later
+pushes can use:
+
+```powershell
 git push
 ```
 
@@ -532,7 +655,8 @@ nothing to commit, working tree clean
 
 🚧 Planned for a future revision.
 
-This workflow will document the complete process for setting up an existing GitHub project on a new workstation, including:
+This workflow will document the complete process for setting up an existing GitHub project on a new workstation,
+including:
 
 - Cloning the repository
 - Creating a new virtual environment
