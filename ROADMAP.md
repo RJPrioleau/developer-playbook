@@ -24,7 +24,7 @@
 
 ### COMMANDS.md
 
-- [ ] Add clickable Table of Contents (after approximately 10–15 commands)
+- [x] Add clickable Table of Contents (after approximately 10–15 commands)
 - [ ] Organize commands by category
 - [ ] Add Frequently Used section
 - [ ] Add Command Index

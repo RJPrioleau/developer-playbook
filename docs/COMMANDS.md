@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 
-Last Updated: 2026-07-21
+Last Updated: 2026-07-22
 
 > **Personal Software Development Command Reference**
 >
@@ -16,6 +16,28 @@ Last Updated: 2026-07-21
 > The goal is to understand command **patterns** so they can be adapted to any
 > project. Every command in this document should come from solving a real
 > problem, not from copying a cheat sheet.
+
+---
+
+## Quick Navigation
+
+- [Create and Connect a GitHub Repository](#create-and-connect-a-github-repository-gh-repo-create)
+- [Open a Project in PyCharm](#open-a-project-in-pycharm)
+- [Locate an Installed Program](#locate-an-installed-program-get-childitem)
+- [Change Directory](#change-directory-set-location)
+- [Display Current Directory](#display-current-directory-get-location)
+- [Display the Complete Path of a File](#display-the-complete-path-of-a-file-resolve-path)
+- [Create Files and Directories](#create-files-and-directories-new-item-and-mkdir)
+- [Delete Files](#delete-files-remove-item)
+- [Search Python Files for a Function or Text](#search-python-files-for-a-function-or-text)
+- [Open a Specific File in PyCharm](#open-a-specific-file-in-pycharm)
+- [Display a File in the Terminal](#display-a-file-in-the-terminal)
+- [Display the Beginning of a File](#display-the-beginning-of-a-file)
+- [Display a Specific Portion of a File](#display-a-specific-portion-of-a-file)
+- [Display Matching Text with Surrounding Context](#display-matching-text-with-surrounding-context)
+- [Workflow: Locate, Inspect, and Open Code](#workflow-locate-inspect-and-open-code)
+- [Run a Python Function from PowerShell](#run-a-python-function-from-powershell)
+- [Run Multiline Python from PowerShell](#run-multiline-python-from-powershell)
 
 ---
 
@@ -668,6 +690,580 @@ Get-ChildItem
 One of the first commands to run whenever a terminal behaves unexpectedly.
 
 If Git, Python, or another command isn't finding files, verify the current working directory before troubleshooting anything else.
+
+## Display the Complete Path of a File (Resolve-Path)
+
+### 🎯 Purpose
+
+Convert a relative file or directory path into its complete absolute path.
+
+### ⚙️ What It Does
+
+`Resolve-Path` finds an existing item and returns a path object containing its resolved location.
+
+This replaces the manual process of running `pwd`, copying the current directory, copying the filename, and joining the two values yourself.
+
+### 🤔 Why It Matters
+
+Useful when another tool, application, or conversation needs the exact location of a file. It also prevents missing separators, duplicated directory names, and other mistakes caused by assembling paths manually.
+
+### 📌 Alias
+
+```powershell
+rvpa
+```
+
+This alias executes the `Resolve-Path` cmdlet.
+
+### 💻 Full Command
+
+```powershell
+Resolve-Path
+```
+
+### 📖 General Patterns
+
+Display the resolved path as a PowerShell path object:
+
+```powershell
+Resolve-Path ".\<relative-path>"
+```
+
+Return only the complete path as plain text:
+
+```powershell
+(Resolve-Path ".\<relative-path>").Path
+```
+
+Retrieve the same complete path from the file's metadata:
+
+```powershell
+(Get-Item ".\<relative-path>").FullName
+```
+
+### 📝 Examples
+
+From the `recipe-dashboard` project root, display the complete path to `PRODUCT.md`:
+
+```powershell
+Resolve-Path ".\docs\PRODUCT.md"
+```
+
+Example output:
+
+```text
+Path
+----
+C:\Users\Jaypr\Python-Projects\recipe-dashboard\docs\PRODUCT.md
+```
+
+Return only the path text:
+
+```powershell
+(Resolve-Path ".\docs\PRODUCT.md").Path
+```
+
+Resolve a filename containing spaces:
+
+```powershell
+(Resolve-Path ".\docs\ChatGPT_Conversations\Initial Conversation - 20260722.pdf").Path
+```
+
+Use `Get-Item` as an alternative:
+
+```powershell
+(Get-Item ".\docs\PRODUCT.md").FullName
+```
+
+### 🔍 Breakdown
+
+**Resolve-Path**
+
+Resolves the supplied path and returns information about its complete location.
+
+**Relative path prefix (`.\`)**
+
+Represents the terminal's current directory. The rest of the relative path is resolved from that location.
+
+**Parentheses**
+
+Cause `Resolve-Path` or `Get-Item` to run before PowerShell accesses a property on the returned object.
+
+**.Path**
+
+Selects only the resolved path string from the object returned by `Resolve-Path`.
+
+**Get-Item**
+
+Retrieves the file or directory as a PowerShell object.
+
+**.FullName**
+
+Selects the item's complete path from the object returned by `Get-Item`.
+
+### Requirements
+
+The target file or directory must already exist. The relative path must also be correct for the terminal's current location.
+
+### ✅ Verification
+
+Confirm the current location when a relative path does not resolve:
+
+```powershell
+Get-Location
+```
+
+Confirm that the target exists:
+
+```powershell
+Test-Path ".\docs\PRODUCT.md"
+```
+
+`Test-Path` returns `True` when the path exists.
+
+### ⚠️ Common Mistakes
+
+- Running the command from a different directory than the relative path assumes.
+- Omitting quotes around a path containing spaces.
+- Expecting `Resolve-Path` to create a missing file or directory.
+- Copying the `Path` table heading when only the complete path text is needed. Use `(Resolve-Path "<path>").Path` instead.
+- Copying the `PS C:\...>` prompt as part of the path.
+
+### 🔗 Related Commands
+
+```powershell
+Get-Item
+Get-Location
+Test-Path
+```
+
+### 💡 Lo Notes
+
+This command was documented after manually combining the output of `pwd` with a filename to obtain a complete path.
+
+Use `Resolve-Path` to let PowerShell assemble and validate the path. Add `.Path` when another tool needs the result as plain text.
+
+## Create Files and Directories (New-Item and mkdir)
+
+### 🎯 Purpose
+
+Create one or more files or directories from PowerShell, including items inside another directory without changing the terminal's current location.
+
+### ⚙️ What It Does
+
+`New-Item` creates a new item at each path supplied to it. The `-ItemType` parameter specifies whether the item is a file or a directory.
+
+In Windows PowerShell, `mkdir` is a convenience function that calls `New-Item` with the item type set to `Directory`. It creates directories only.
+
+### 🤔 Why It Matters
+
+Useful for creating project files and directories quickly while remaining at the project root. A relative path can point into an existing subdirectory, so changing directories first is unnecessary.
+
+For example, from:
+
+```text
+PS C:\Users\Jaypr\Python-Projects\recipe-dashboard>
+```
+
+you can create a file inside `docs` by including `docs` in the path.
+
+### 📌 Aliases and Shortcuts
+
+```powershell
+ni
+mkdir
+```
+
+`ni` is an alias for `New-Item`.
+
+Use `mkdir` when creating directories. Use `New-Item` or `ni` when creating files or when you want the item type to be explicit.
+
+### 💻 Full Command
+
+```powershell
+New-Item
+```
+
+### 📖 General Patterns
+
+Create one file:
+
+```powershell
+New-Item -Path ".\<filename>" -ItemType File
+```
+
+For a simple interactive command, the `-Path` parameter name and item type can be omitted:
+
+```powershell
+ni ".\<filename>"
+```
+
+For filesystem paths, `New-Item` creates a file by default when `-ItemType` is omitted. Writing `-ItemType File` makes the intent explicit.
+
+Create one directory:
+
+```powershell
+New-Item -Path ".\<directory-name>" -ItemType Directory
+```
+
+Create multiple files at once:
+
+```powershell
+New-Item -Path ".\<first-file>", ".\<second-file>" -ItemType File
+```
+
+Create multiple directories at once:
+
+```powershell
+New-Item -Path ".\<first-directory>", ".\<second-directory>" -ItemType Directory
+```
+
+Create multiple directories with `mkdir`:
+
+```powershell
+mkdir ".\<first-directory>", ".\<second-directory>"
+```
+
+Create an item inside a different existing directory:
+
+```powershell
+New-Item -Path ".\<directory>\<filename>" -ItemType File
+```
+
+### Optional `-Path` Parameter Name
+
+`-Path` is the first positional parameter of `New-Item`. When the path is the first unnamed value after the command, PowerShell assigns that value to `-Path` automatically.
+
+The path value is still required, but writing the parameter name is optional in this position. These commands are equivalent:
+
+```powershell
+New-Item -Path "DATA_DICTIONARY.md"
+New-Item "DATA_DICTIONARY.md"
+ni -Path "DATA_DICTIONARY.md"
+ni "DATA_DICTIONARY.md"
+```
+
+The shorter positional form is convenient for simple commands entered directly in the terminal. The explicit form is useful while learning, in documentation, in scripts, or whenever naming parameters makes a longer command easier to understand.
+
+Both forms can target a different directory without changing the terminal's current location:
+
+```powershell
+ni -Path ".\docs\DATA_DICTIONARY.md"
+ni ".\docs\DATA_DICTIONARY.md"
+```
+
+### 📝 Examples
+
+From the `recipe-dashboard` project root, create `GLOSSARY.md` inside the existing `docs` directory without changing directories:
+
+```powershell
+New-Item -Path ".\docs\GLOSSARY.md" -ItemType File
+```
+
+Create two files in `docs` at once:
+
+```powershell
+New-Item -Path ".\docs\GLOSSARY.md", ".\docs\SOURCES.md" -ItemType File
+```
+
+Create two directories at the project root:
+
+```powershell
+New-Item -Path ".\data", ".\tests" -ItemType Directory
+```
+
+Create two directories inside `docs` with `mkdir`:
+
+```powershell
+mkdir ".\docs\guides", ".\docs\examples"
+```
+
+Create a file using an absolute path, regardless of the terminal's current location:
+
+```powershell
+New-Item -Path "C:\Users\Jaypr\Python-Projects\recipe-dashboard\docs\GLOSSARY.md" -ItemType File
+```
+
+### 🔍 Breakdown
+
+**New-Item**
+
+Creates a new item at the specified path.
+
+**-Path**
+
+Specifies where to create the item. It accepts one path or multiple comma-separated paths.
+
+The parameter name is optional when its value is supplied in the first positional slot. Omitting `-Path` does not mean there is no path; PowerShell interprets the first unnamed value as the path.
+
+**-ItemType File**
+
+Creates an empty file.
+
+**-ItemType Directory**
+
+Creates a directory.
+
+**mkdir**
+
+Creates a directory without requiring `-ItemType Directory`.
+
+**Relative path prefix (`.\`)**
+
+Represents the terminal's current directory. For example, `.\docs\GLOSSARY.md` means `GLOSSARY.md` inside the `docs` directory beneath the current location.
+
+**Absolute path**
+
+A complete path beginning with a drive letter, such as `C:\Users\Jaypr\...`. It does not depend on the terminal's current directory.
+
+### ✅ Verification
+
+Confirm that the new items exist:
+
+```powershell
+Get-ChildItem ".\docs"
+```
+
+Check one specific path:
+
+```powershell
+Test-Path ".\docs\GLOSSARY.md"
+```
+
+`Test-Path` returns `True` when the item exists.
+
+### ⚠️ Common Mistakes
+
+- Thinking that `-Path` itself is required. The path value is required, but the parameter name can be omitted when the path is in the first positional slot.
+- Assuming `-ItemType File` is always required. It is optional for filesystem files, although using it can make scripts and documentation clearer.
+- Using `mkdir` to create a file; `mkdir` creates directories only.
+- Forgetting that relative paths are resolved from the terminal's current directory.
+- Supplying a nested path whose parent directory does not exist.
+- Reusing a path that already exists without first checking it. PowerShell may report that the item already exists.
+- Copying the `PS C:\...>` prompt text as part of the command.
+
+Use quotes around paths that contain spaces.
+
+### 🔗 Related Commands
+
+```powershell
+Get-ChildItem
+Get-Location
+Set-Location
+Test-Path
+```
+
+### 💡 Lo Notes
+
+The important pattern is that a command can target another directory through its path. The terminal does not have to move into that directory first.
+
+Use a relative path when the target is inside the current project. Use an absolute path when the command should work independently of the current terminal location.
+
+## Delete Files (Remove-Item)
+
+### 🎯 Purpose
+
+Delete one or more files from PowerShell, including files in another directory without changing the terminal's current location.
+
+### ⚙️ What It Does
+
+`Remove-Item` removes the item at the specified path.
+
+For normal filesystem use, a file deleted with `Remove-Item` does not go to the Recycle Bin. Treat the operation as permanent.
+
+### 🤔 Why It Matters
+
+Useful for removing an unwanted file directly from the terminal while keeping the target path explicit and verifiable.
+
+### 📌 Aliases
+
+```powershell
+del
+ri
+rm
+```
+
+These aliases execute the `Remove-Item` cmdlet. The full command is clearer in scripts and documentation.
+
+### 💻 Full Command
+
+```powershell
+Remove-Item
+```
+
+### 📖 General Patterns
+
+Preview a deletion without performing it:
+
+```powershell
+Remove-Item -LiteralPath ".\<filename>" -WhatIf
+```
+
+Delete one file:
+
+```powershell
+Remove-Item -LiteralPath ".\<filename>"
+```
+
+Delete one file using the concise interactive form:
+
+```powershell
+ri ".\<filename>"
+```
+
+Delete multiple specific files:
+
+```powershell
+Remove-Item -LiteralPath ".\<first-file>", ".\<second-file>"
+```
+
+Request confirmation before deleting:
+
+```powershell
+Remove-Item -LiteralPath ".\<filename>" -Confirm
+```
+
+### Positional `-Path` and `-LiteralPath`
+
+`-Path` is the first positional parameter of `Remove-Item`. When a filename or path is the first unnamed value after the command, PowerShell assigns it to `-Path` automatically.
+
+These commands are equivalent:
+
+```powershell
+Remove-Item -Path "20260722_Design_phase_complete.docx"
+Remove-Item "20260722_Design_phase_complete.docx"
+ri -Path "20260722_Design_phase_complete.docx"
+ri "20260722_Design_phase_complete.docx"
+```
+
+The filename is a relative path. When the file is in the terminal's current directory, only its name is needed.
+
+The short form can also target another directory without changing locations:
+
+```powershell
+ri ".\docs\OLD_NOTES.md"
+```
+
+The important distinction is that an unnamed positional value binds to `-Path`, not `-LiteralPath`.
+
+`-Path` supports wildcard characters such as `*`, `?`, and `[]`. `-LiteralPath` treats every character as part of the exact filename and must be written explicitly:
+
+```powershell
+ri -LiteralPath "notes[1].txt"
+```
+
+Use the concise positional form for a simple, known filename entered interactively. Use explicit `-LiteralPath` in scripts, for filenames containing wildcard characters, or whenever identifying one exact target is more important than brevity.
+
+### 📝 Examples
+
+From the `recipe-dashboard` project root, preview deleting a file inside `docs`:
+
+```powershell
+Remove-Item -LiteralPath ".\docs\OLD_NOTES.md" -WhatIf
+```
+
+Delete the file after confirming the preview points to the correct target:
+
+```powershell
+Remove-Item -LiteralPath ".\docs\OLD_NOTES.md"
+```
+
+Delete two specific files at once:
+
+```powershell
+Remove-Item -LiteralPath ".\draft-one.txt", ".\draft-two.txt"
+```
+
+Delete a file using its complete path:
+
+```powershell
+Remove-Item -LiteralPath "C:\Users\Jaypr\Python-Projects\recipe-dashboard\docs\OLD_NOTES.md"
+```
+
+### 🔍 Breakdown
+
+**Remove-Item**
+
+Deletes the specified file or directory.
+
+**-LiteralPath**
+
+Identifies the exact target. PowerShell does not interpret wildcard characters such as `*` or `?` when they appear in a literal path.
+
+**-Path**
+
+Identifies one or more targets and supports wildcard matching. Its parameter name can be omitted when the path is supplied as the first positional argument.
+
+**-WhatIf**
+
+Displays what PowerShell would remove without performing the deletion.
+
+**-Confirm**
+
+Requests confirmation before PowerShell performs the deletion.
+
+### ✅ Safer Workflow
+
+Confirm that the target exists:
+
+```powershell
+Test-Path -LiteralPath ".\docs\OLD_NOTES.md"
+```
+
+Inspect the exact item:
+
+```powershell
+Get-Item -LiteralPath ".\docs\OLD_NOTES.md"
+```
+
+Preview the deletion:
+
+```powershell
+Remove-Item -LiteralPath ".\docs\OLD_NOTES.md" -WhatIf
+```
+
+Delete only after the path is correct:
+
+```powershell
+Remove-Item -LiteralPath ".\docs\OLD_NOTES.md"
+```
+
+Verify that the file no longer exists:
+
+```powershell
+Test-Path -LiteralPath ".\docs\OLD_NOTES.md"
+```
+
+The final `Test-Path` should return `False`.
+
+### ⚠️ Common Mistakes
+
+- Assuming that `ri "<filename>"` uses `-LiteralPath`. The positional argument binds to `-Path`.
+- Assuming the file can always be recovered from the Recycle Bin.
+- Deleting before verifying the current directory and target path.
+- Using a wildcard when only one specific file should be removed.
+- Omitting quotes around paths containing spaces.
+- Copying the `PS C:\...>` prompt as part of the command.
+- Using `-Force` automatically instead of understanding why a normal deletion failed.
+
+This entry intentionally does not provide a recursive directory-deletion command. Recursive deletion has a larger impact and requires additional path verification.
+
+### 🔗 Related Commands
+
+```powershell
+Get-Item
+Get-Location
+Resolve-Path
+Test-Path
+```
+
+### 💡 Lo Notes
+
+Use `-LiteralPath` when deleting a known file and `-WhatIf` when there is any uncertainty about the target.
+
+The short aliases are convenient at the terminal, but `Remove-Item` makes the destructive action easier to recognize before running it.
+
+For a simple file in the current directory, `ri "<filename>"` is a reasonable interactive shortcut. Remember that the filename is still a path value even though the `-Path` parameter name is omitted.
 
 ## Search Python Files for a Function or Text
 

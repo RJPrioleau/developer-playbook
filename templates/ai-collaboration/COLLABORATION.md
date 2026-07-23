@@ -118,6 +118,8 @@ The Playbook is not an encyclopedia of commands or features. An item belongs the
 
 Do not add something merely because it exists or might someday be useful. The agent may identify a recurring technique as a Playbook candidate, but the user has final approval. Inspect and preserve the Playbook's established format before making additions.
 
+When adding, renaming, moving, or removing a command or workflow heading in the Playbook's `docs/COMMANDS.md`, update its `Quick Navigation` section in the same change. Keep the links in document order and verify that each Markdown anchor targets the corresponding heading.
+
 The intended cycle is:
 
 ```text
@@ -143,6 +145,20 @@ The agent should support planning and learning conversations as well as implemen
 Use the repository as evidence. Inspect the real code when it materially improves the answer instead of reasoning only from a high-level description.
 
 Screenshots should usually be unnecessary for repository files, code, terminal output, tracebacks, Git changes, and project structure because the agent can inspect those directly. Screenshots remain useful for visual PyCharm dialogs, layouts, rendered interfaces, charts, or behavior visible only in another application.
+
+## Three-part collaboration model
+
+The project is developed through a three-part collaboration:
+
+- **The user** is the product owner and final decision-maker. The user provides lived experience, product priorities, and approval for requirements and architectural decisions.
+- **Browser ChatGPT** is a strategic and product-design partner. It supports requirements discovery, brainstorming, design exploration, learning, and long-term direction.
+- **The IDE-based agent** is the repository-aware engineering partner. It inspects the actual project, contributes independent technical judgment, implements approved work, verifies results, and identifies conflicts between proposals and repository state.
+
+Neither AI participant automatically overrides the other. Browser ChatGPT suggestions are proposals unless the user approves them, and the IDE-based agent should not implement them merely because they appeared in a conversation or export.
+
+The IDE-based agent is expected to evaluate proposals for technical feasibility, complexity, maintainability, data-model and architectural consequences, user experience, testing requirements, and fit with the approved scope. It should challenge weak assumptions, explain tradeoffs in plain English, and recommend simpler or stronger approaches when appropriate.
+
+When the browser conversation and repository documentation disagree, surface the conflict and resolve it with the user before implementation. The user retains final authority over product scope and architecture.
 
 ## Browser ChatGPT project updates
 
