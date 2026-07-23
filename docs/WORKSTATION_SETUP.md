@@ -240,6 +240,8 @@ C:\Program Files\GitHub CLI
 
 If `gh.exe` exists there but `gh` is not recognized, add that directory to `PATH`, open a fresh terminal, and run `gh --version` again. Do not assume the installer added the directory correctly.
 
+After GitHub CLI resolves successfully, continue to [GitHub Authentication](#github-authentication) to sign in and verify repository access.
+
 ## PyCharm
 
 Install and launch PyCharm. Confirm that it opens successfully before configuring its terminal and project interpreter.
@@ -355,6 +357,8 @@ git config --global user.email
 The output should match the intended GitHub identity. Do not place personal names or email addresses in this reusable guide.
 
 ## GitHub Authentication
+
+Complete the [GitHub CLI](#github-cli) installation and verification steps before authenticating.
 
 Authenticate:
 
