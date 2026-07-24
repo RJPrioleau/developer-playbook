@@ -39,6 +39,11 @@ Installer success messages prove only that an installer finished. They do not pr
 
 PyCharm settings changes apply only to newly created terminal sessions. Close existing terminal tabs completely and create new ones before testing a changed shell or `PATH`.
 
+Setup establishes the workstation standard. Use the
+[Windows Workstation Audit](WORKSTATION_AUDIT.md) to verify that standard before troubleshooting
+or repairing a machine. Review failed checks first, make repairs deliberately, and verify each
+change in a fresh session.
+
 ---
 
 ## ⏱️ Estimated Setup Time
