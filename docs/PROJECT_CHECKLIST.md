@@ -653,17 +653,209 @@ nothing to commit, working tree clean
 
 # Workflow 2 - Clone an Existing Project
 
-🚧 Planned for a future revision.
+Use this workflow to continue work on an existing GitHub repository from a new
+computer. Run every command from PowerShell and follow the repository's own
+instructions when they differ from the general examples below.
 
-This workflow will document the complete process for setting up an existing GitHub project on a new workstation,
-including:
+## Step 1 - Open the Standard Workspace
 
-- Cloning the repository
-- Creating a new virtual environment
-- Activating the virtual environment
-- Installing dependencies from `requirements.txt`
-- Configuring PyCharm
-- Verifying the development environment
+New repositories belong under the standard workspace. Existing repositories in
+other locations should remain where they are until a separate migration is
+planned.
+
+```powershell
+Set-Location "$env:USERPROFILE\Python-Projects"
+Get-Location
+```
+
+Expected location:
+
+```text
+C:\Users\<username>\Python-Projects
+```
+
+## Step 2 - Verify GitHub Access
+
+```powershell
+gh auth status
+```
+
+Confirm that the intended GitHub account is active and that the Git operations
+protocol is HTTPS.
+
+List repositories when the exact repository name is not known:
+
+```powershell
+gh repo list <owner> --limit 100
+```
+
+## Step 3 - Check the Destination
+
+Before cloning, confirm that a directory with the repository name does not
+already exist:
+
+```powershell
+Test-Path -LiteralPath ".\<repository-name>"
+```
+
+Expected result:
+
+```text
+False
+```
+
+If the result is `True`, stop and inspect the existing directory. Do not clone
+over it, rename it, or delete it without first determining whether it contains
+another clone or uncommitted work.
+
+## Step 4 - Clone the Repository
+
+```powershell
+gh repo clone <owner>/<repository-name>
+```
+
+Closing the terminal after this command does not undo a successful clone. Open
+a new PowerShell terminal and verify the repository without cloning it again:
+
+```powershell
+git -C ".\<repository-name>" status
+```
+
+Expected result:
+
+```text
+On branch <branch-name>
+Your branch is up to date with 'origin/<branch-name>'.
+
+nothing to commit, working tree clean
+```
+
+## Step 5 - Enter and Inspect the Repository
+
+```powershell
+Set-Location ".\<repository-name>"
+Get-ChildItem -Force
+```
+
+Read the repository instructions before creating an environment or installing
+dependencies:
+
+```powershell
+Get-Content .\README.md
+Get-Content .\AGENTS.md
+```
+
+Also inspect the dependency file named by the repository. For a Python project
+using `requirements.txt`:
+
+```powershell
+Get-Content .\requirements.txt
+```
+
+## Step 6 - Verify the Required Python
+
+Check the project documentation for its required Python version, then inspect
+the interpreter that will create the virtual environment:
+
+```powershell
+python --version
+python -c "import sys; print(sys.executable)"
+```
+
+Do not create the environment with an incompatible interpreter. Install or
+select the required Python version first.
+
+## Step 7 - Create and Activate the Virtual Environment
+
+Virtual environments are machine-specific and should be recreated after
+cloning rather than copied between computers:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Verify that the active interpreter is inside the cloned repository:
+
+```powershell
+python -c "import sys; print(sys.executable)"
+```
+
+Expected pattern:
+
+```text
+C:\Users\<username>\Python-Projects\<repository-name>\.venv\Scripts\python.exe
+```
+
+## Step 8 - Install Recorded Dependencies
+
+Follow the repository's documented dependency command. For a project using
+`requirements.txt`:
+
+```powershell
+python -m pip install -r .\requirements.txt
+```
+
+Do not install guessed packages individually when the project already records
+its dependencies.
+
+## Step 9 - Run the Project Check
+
+Use the verification command documented by the repository. For a Django
+project:
+
+```powershell
+python .\manage.py check
+```
+
+Expected result:
+
+```text
+System check identified no issues (0 silenced).
+```
+
+Then confirm that generated local files such as `.venv` are ignored:
+
+```powershell
+git status
+```
+
+The working tree should remain clean unless the repository documents an
+intentional setup change.
+
+## Step 10 - Open the Project in PyCharm
+
+From the repository root:
+
+```powershell
+pycharm64.exe .
+```
+
+Allow PyCharm to finish indexing. Open a **new** PyCharm terminal tab and
+verify its interpreter:
+
+```powershell
+python --version
+python -c "import sys; print(sys.executable)"
+```
+
+The executable must point to the repository's `.venv`. A terminal tab that was
+already open before interpreter configuration may retain the old environment;
+open a new tab before troubleshooting.
+
+## Completion Checklist
+
+- [ ] Repository was cloned under `Python-Projects`
+- [ ] GitHub authentication and repository access succeeded
+- [ ] Destination was checked before cloning
+- [ ] Repository instructions were read
+- [ ] Required Python version was confirmed
+- [ ] Local virtual environment was created and activated
+- [ ] Recorded dependencies installed successfully
+- [ ] Project-specific verification passed
+- [ ] Git working tree remained clean
+- [ ] PyCharm opened the repository
+- [ ] A fresh PyCharm terminal used the project virtual environment
 
 ---
 
