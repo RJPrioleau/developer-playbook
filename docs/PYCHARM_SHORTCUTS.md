@@ -47,25 +47,44 @@ configured and tested in PyCharm.
 
 ### Configured
 
-| Shortcut | Action |
-|---|---|
-| `Esc` | Return to Editor |
-| `Alt + A` | Open AI Chat |
-| `Alt + T` | Open Terminal |
-| `Alt + Shift + Q` | Select All in Terminal |
-| `Ctrl + Shift + N` | Jump to File |
+#### Navigation
+
+| Shortcut | Action | Notes |
+|---|---|---|
+| `Esc` | Return to Editor | — |
+| `Alt + A` | Open AI Chat | — |
+| `Alt + T` | Open Terminal | — |
+
+#### Files
+
+| Shortcut | Action | Notes |
+|---|---|---|
+| `Ctrl + Shift + N` | Jump to File | Searches project files by name |
+| `Alt + Right` / `Alt + Left` | Cycle through open editor tabs | Editor focus required |
+| `Ctrl + Tab` | Open the Switcher | Best for switching among open files |
+| `Ctrl + E` | Open Recent Files | Includes recently used files that are not open |
+
+#### Terminal
+
+| Shortcut | Action | Notes |
+|---|---|---|
+| `Alt + Shift + Q` | Select All | Terminal focus required |
 
 ### Still to Assign
+
+#### Work With Code
 
 | Action |
 |---|
 | Reformat Code |
+| Rename |
+
+#### Search
+
+| Action |
+|---|
 | Find Action |
 | Search Everywhere |
-| Rename |
-| Cycle through open editor tabs |
-| Open the Switcher |
-| Open Recent Files |
 
 ## Verify a Keybinding
 
