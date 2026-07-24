@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 
-Last Updated: 2026-07-22
+Last Updated: 2026-07-24
 
 > **Personal Software Development Command Reference**
 >
@@ -36,6 +36,7 @@ Last Updated: 2026-07-22
 - [Display a Specific Portion of a File](#display-a-specific-portion-of-a-file)
 - [Display Matching Text with Surrounding Context](#display-matching-text-with-surrounding-context)
 - [Workflow: Locate, Inspect, and Open Code](#workflow-locate-inspect-and-open-code)
+- [Check a Python File for Syntax Errors](#check-a-python-file-for-syntax-errors-python--m-py_compile)
 - [Run a Python Function from PowerShell](#run-a-python-function-from-powershell)
 - [Run Multiline Python from PowerShell](#run-multiline-python-from-powershell)
 
@@ -1806,7 +1807,146 @@ pycharm64.exe .\analysis\recommendation_engine.py
 Use the commands together instead of relying on the GUI to search, scroll, and locate code manually.
 
 This workflow improves both PowerShell repetition and familiarity with the project structure.
+
 ---
+
+## Check a Python File for Syntax Errors (`python -m py_compile`)
+
+### Purpose
+
+Ask Python to parse and compile one file without starting the application or
+running its test suite. This isolates syntax errors and reports the affected
+file, line number, source line, and the point where parsing failed.
+
+---
+
+### Alias
+
+None
+
+---
+
+### Full Command
+
+```powershell
+python -m py_compile .\dashboard\tests.py
+```
+
+---
+
+### General Pattern
+
+Run the command from the project root with the project's virtual environment
+activated:
+
+```powershell
+python -m py_compile .\<path-to-python-file>
+```
+
+---
+
+### Real-World Example
+
+This command was used while changing a Django test:
+
+```powershell
+python -m py_compile .\dashboard\tests.py
+```
+
+Python reported:
+
+```text
+File ".\dashboard\tests.py", line 11
+  self.assertContains((response, "<h1>Recipe Dashboard</h1>", html=True)
+                                                               ^^^^^^^^^
+SyntaxError: invalid syntax
+```
+
+The line contained two opening parentheses after `assertContains`. Removing
+the extra parenthesis made the command complete without output.
+
+---
+
+### How to Interpret the Result
+
+Success is silent: PowerShell returns to the prompt without printing anything.
+
+For a syntax error, read the diagnostic from the bottom upward:
+
+1. Read the error type and message.
+2. Go to the reported line number.
+3. Inspect the source line and caret (`^`) marker.
+4. Check earlier delimiters on that line and the line immediately above.
+
+The caret marks where Python can prove the syntax is invalid. It does not
+always identify where the original mistake began. An extra opening parenthesis,
+unclosed quote, or missing bracket can remain plausible until Python reaches a
+later token.
+
+---
+
+### Requirements
+
+- Run the command from a directory where the file path resolves correctly.
+- Activate the project's virtual environment so the intended Python
+  interpreter performs the check.
+- Save the file before running the command.
+
+---
+
+### Verification
+
+After the syntax check succeeds, run the project's focused test or normal
+verification command:
+
+```powershell
+python .\manage.py test dashboard
+```
+
+`py_compile` proves that the file is valid Python syntax. It does not prove
+that the application behavior is correct.
+
+---
+
+### Common Mistakes
+
+- Treating silent output as a failure instead of success.
+- Assuming the caret always points at the original mistake.
+- Checking only the reported token instead of earlier parentheses, brackets,
+  braces, quotes, and the preceding line.
+- Running the command against an unsaved version of the file.
+- Stopping after compilation without running the relevant application test.
+
+---
+
+### When to Use It
+
+- A Python file appears to contain a syntax error.
+- An IDE highlights a line but the cause is unclear.
+- The full application is slow or unnecessary for isolating a parser error.
+- You want to distinguish invalid syntax from a Django, import, or runtime
+  problem.
+
+---
+
+### Related Commands
+
+```powershell
+python .\manage.py check
+python .\manage.py test <app-name>
+```
+
+---
+
+### Lo Notes
+
+This command was verified while building the Recipe Dashboard's first Django
+template. It isolated an extra opening parenthesis in a focused test. The
+follow-up Django test passed, confirming both valid syntax and correct
+behavior.
+
+---
+
 ## Run a Python Function from PowerShell
 
 ### Purpose
