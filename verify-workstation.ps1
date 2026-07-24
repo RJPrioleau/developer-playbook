@@ -123,6 +123,7 @@ function Test-PowerShell {
 
 function Test-Python {
     $allPaths = @{}
+    $pythonAliasFailure = $false
     foreach ($name in @("python", "py", "pip")) {
         $paths = @(Get-WherePaths $name)
         if ($paths.Count -eq 0) {
@@ -139,6 +140,11 @@ function Test-Python {
         if ($version.ExitCode -eq 0) {
             Write-Result PASS "$name reports: $($version.Output)"
         }
+        elseif ($name -eq "python" -and $resolved -match "\\WindowsApps\\") {
+            $pythonAliasFailure = $true
+            Write-Result WARN "python resolves to the WindowsApps alias, but the alias did not report a Python version." `
+                -NextStep "Run python --version manually, then inspect App Execution Aliases and PATH order."
+        }
         else {
             Write-Result FAIL "$name was found but version detection failed." -NextStep "Run: $name --version"
         }
@@ -146,8 +152,10 @@ function Test-Python {
 
     if ($allPaths.ContainsKey("python")) {
         if ($allPaths.python[0] -match "\\WindowsApps\\") {
-            Write-Result WARN "WindowsApps resolves before the desired Python installation." `
-                -NextStep "Inspect where.exe python and User and Machine PATH order."
+            if (-not $pythonAliasFailure) {
+                Write-Result WARN "WindowsApps resolves before the desired Python installation." `
+                    -NextStep "Inspect where.exe python and User and Machine PATH order."
+            }
         }
         else {
             Write-Result PASS "Python is not being intercepted by a WindowsApps path."
@@ -163,7 +171,10 @@ function Test-Python {
     if ($pythonPath -and $pipPath) {
         $prefix = Invoke-CapturedCommand $pythonPath @("-c", "import sys; print(sys.prefix)")
         $pip = Invoke-CapturedCommand $pipPath @("--version")
-        if ($prefix.ExitCode -eq 0 -and $pip.Output -notlike "*$($prefix.Output)*") {
+        if ($prefix.ExitCode -ne 0) {
+            Write-Result INFO "Python and pip installation consistency could not be compared because python did not run."
+        }
+        elseif ($pip.Output -notlike "*$($prefix.Output)*") {
             Write-Result WARN "pip may point to a different Python installation than python." `
                 -NextStep "Run: python -m pip --version"
         }

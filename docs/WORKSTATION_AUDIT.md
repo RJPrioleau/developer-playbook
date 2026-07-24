@@ -78,9 +78,15 @@ The script checks:
 - Git, Git LFS, global Git identity, GitHub CLI, and GitHub authentication
 - PyCharm installation
 
-Multiple Python installations are reported, not automatically failed. WindowsApps precedence,
-inconsistent Python and pip installations, malformed PATH entries, and missing command
+Multiple Python installations are reported, not automatically failed. If `python` resolves to a
+WindowsApps alias that cannot report a version, the audit warns about PATH ordering or App
+Execution Alias behavior instead of treating the alias itself as a missing Python installation.
+Inconsistent Python and pip installations, malformed PATH entries, and missing command
 directories receive results appropriate to their impact.
+
+Duplicate PATH entries are warnings. They are cleanup items unless other evidence shows that they
+are changing command resolution. Unmatched quotation marks remain failures because they indicate
+structural PATH corruption.
 
 ### Phase 2 - Workspace Validation
 
