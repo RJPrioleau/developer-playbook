@@ -6,6 +6,12 @@ The Developer Playbook is a separate, portable repository of reusable commands, 
 
 The Playbook is not an encyclopedia. Add material only when it has solved a real problem, addresses a recurring workflow, or is likely to help the user work more independently. The user has final approval for Playbook additions.
 
+## Project location standard
+
+Create and clone all future projects under
+`C:\Users\<username>\Python-Projects`. Existing projects must remain in their
+current locations until the user approves a separate, deliberate migration.
+
 ## Read before editing
 
 Before substantial work, inspect the relevant repository documents and the current working tree.

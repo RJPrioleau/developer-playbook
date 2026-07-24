@@ -9,6 +9,12 @@
 
 Replace every angle-bracket placeholder during project setup. Do not leave unresolved placeholders in the committed project copy.
 
+## Project location standard
+
+Create and clone all future projects under
+`C:\Users\<username>\Python-Projects`. Existing projects must remain in their
+current locations until the user approves a separate, deliberate migration.
+
 ## Collaboration context
 
 Read `docs/COLLABORATION.md` before beginning substantial work. It describes the user's learning goals, preferred teaching style, division of responsibilities between PyCharm and PowerShell, browser ChatGPT update workflow, and relationship between the current project and the independent Developer Playbook repository.
