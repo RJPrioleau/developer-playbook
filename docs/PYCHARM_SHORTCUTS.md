@@ -17,10 +17,10 @@ These are the current desktop keybindings.
 
 | Shortcut | Action |
 |---|---|
-| `Esc` / `Ctrl + Alt + E` | Return to Editor |
-| `Ctrl + Alt + A` | Open Codex |
-| `Alt + F12` | Open Terminal |
-| `Ctrl + Alt + Q` | Select All in Terminal |
+| `Esc` | Return to Editor |
+| `Alt + A` | Open AI Chat |
+| `Alt + T` | Open Terminal |
+| `Alt + Shift + Q` | Select All in Terminal |
 
 ### Work With Code
 
@@ -45,46 +45,32 @@ These are the current desktop keybindings.
 The Surface Pro keymap is being remapped. Record each binding here after it is
 configured and tested in PyCharm.
 
-### Configured
+### Switch Tools
 
-#### Navigation
+| Shortcut | Action |
+|---|---|
+| `Esc` | Return to Editor |
+| `Alt + A` | Open AI Chat |
+| `Alt + T` | Open Terminal |
+| `Alt + Shift + Q` | Select All in Terminal |
 
-| Shortcut | Action | Notes |
-|---|---|---|
-| `Esc` | Return to Editor | — |
-| `Alt + A` | Open AI Chat | — |
-| `Alt + T` | Open Terminal | — |
+### Work With Code
 
-#### Files
+| Shortcut | Action |
+|---|---|
+| `Ctrl + Alt + L` | Reformat Code |
+| `Ctrl + Shift + A` | Find Action |
+| `Shift`, `Shift` | Search Everywhere |
+| `Shift + F6` | Rename |
 
-| Shortcut | Action | Notes |
-|---|---|---|
-| `Ctrl + Shift + N` | Jump to File | Searches project files by name |
-| `Alt + Right` / `Alt + Left` | Cycle through open editor tabs | Editor focus required |
-| `Ctrl + Tab` | Open the Switcher | Best for switching among open files |
-| `Ctrl + E` | Open Recent Files | Includes recently used files that are not open |
+### Navigate Files
 
-#### Terminal
-
-| Shortcut | Action | Notes |
-|---|---|---|
-| `Alt + Shift + Q` | Select All | Terminal focus required |
-
-### Still to Assign
-
-#### Work With Code
-
-| Action |
-|---|
-| Reformat Code |
-| Rename |
-
-#### Search
-
-| Action |
-|---|
-| Find Action |
-| Search Everywhere |
+| Shortcut | Action |
+|---|---|
+| `Alt + Right` / `Alt + Left` | Cycle through open editor tabs |
+| `Ctrl + Tab` | Open the Switcher; hold `Ctrl` and press `Tab` to move through open files |
+| `Ctrl + Shift + N` | Search for a project file by name; press `Enter` to open it |
+| `Ctrl + E` | Open Recent Files |
 
 ## Verify a Keybinding
 
