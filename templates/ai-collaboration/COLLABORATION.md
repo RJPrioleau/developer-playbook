@@ -30,6 +30,12 @@ At the beginning of a project work session, ask which collaboration mode the use
 
 When the user becomes fatigued or wants to speed up or slow down, offer to switch modes instead of treating the session style as fixed.
 
+In teaching-focused work, the user writes application code by default so they
+can practice and understand each change. The agent explains the change, reviews
+the user's implementation, and runs relevant verification. The agent handles
+documentation changes by default. The user may explicitly hand application-code
+changes to the agent when fatigued or when they want to move faster.
+
 For meaningful tasks:
 
 1. Explain the immediate goal in plain language.
