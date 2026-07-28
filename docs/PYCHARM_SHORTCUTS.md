@@ -38,6 +38,9 @@ These are the current desktop keybindings.
 | `Ctrl + Shift + A` | Find Action | Searches PyCharm actions and settings |
 | `Shift`, `Shift` | Search Everywhere | Press `Shift` twice quickly |
 | `Shift + F6` | Rename | Safely renames a selected code symbol or file |
+| `Ctrl + Right` | Accept next word of inline completion | Preferred for reviewing generated code incrementally |
+| `End` | Accept current line of inline completion | Useful for reviewing a multi-line suggestion one line at a time |
+| `Tab` | Accept entire inline completion | Review the full suggestion before accepting it |
 
 ### Navigate Files
 
@@ -78,6 +81,9 @@ configured and tested in PyCharm.
 | `Ctrl + Shift + A` | Find Action | Searches PyCharm actions and settings |
 | `Shift`, `Shift` | Search Everywhere | Press `Shift` twice quickly |
 | `Shift + F6` | Rename | Safely renames a selected code symbol or file |
+| `Ctrl + Right` | Accept next word of inline completion | Preferred for reviewing generated code incrementally |
+| `End` | Accept current line of inline completion | Useful for reviewing a multi-line suggestion one line at a time |
+| `Tab` | Accept entire inline completion | Review the full suggestion before accepting it |
 
 ### Navigate Files
 

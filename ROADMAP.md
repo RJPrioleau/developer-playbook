@@ -93,6 +93,7 @@ Topics to include:
 - [ ] Add GitHub workflow guide
 - [ ] Add deployment checklist
 - [ ] Add release checklist
+- [ ] Choose, test, and document practical PyCharm code-folding shortcuts for the desktop and Surface Pro
 - 
 ---
 
