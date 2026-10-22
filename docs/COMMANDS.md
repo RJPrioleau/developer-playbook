@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 
-Last Updated: 2026-07-24
+Last Updated: 2026-10-22
 
 > **Personal Software Development Command Reference**
 >
@@ -21,24 +21,11 @@ Last Updated: 2026-07-24
 
 ## Quick Navigation
 
-- [Create and Connect a GitHub Repository](#create-and-connect-a-github-repository-gh-repo-create)
-- [Open a Project in PyCharm](#open-a-project-in-pycharm)
-- [Locate an Installed Program](#locate-an-installed-program-get-childitem)
-- [Change Directory](#change-directory-set-location)
-- [Display Current Directory](#display-current-directory-get-location)
-- [Display the Complete Path of a File](#display-the-complete-path-of-a-file-resolve-path)
-- [Create Files and Directories](#create-files-and-directories-new-item-and-mkdir)
-- [Delete Files](#delete-files-remove-item)
-- [Search Python Files for a Function or Text](#search-python-files-for-a-function-or-text)
-- [Open a Specific File in PyCharm](#open-a-specific-file-in-pycharm)
-- [Display a File in the Terminal](#display-a-file-in-the-terminal)
-- [Display the Beginning of a File](#display-the-beginning-of-a-file)
-- [Display a Specific Portion of a File](#display-a-specific-portion-of-a-file)
-- [Display Matching Text with Surrounding Context](#display-matching-text-with-surrounding-context)
-- [Workflow: Locate, Inspect, and Open Code](#workflow-locate-inspect-and-open-code)
-- [Check a Python File for Syntax Errors](#check-a-python-file-for-syntax-errors-python--m-py_compile)
-- [Run a Python Function from PowerShell](#run-a-python-function-from-powershell)
-- [Run Multiline Python from PowerShell](#run-multiline-python-from-powershell)
+- [Terminal / PowerShell](#terminal--powershell)
+- [PyCharm](#pycharm)
+- [Python](#python)
+- [Git / GitHub](#git--github)
+- [Workflows](#workflows)
 
 ---
 
@@ -56,11 +43,36 @@ Each command should answer the following questions:
 - When do I typically use it?
 - What did I learn from using it?
 
-Commands move through different sections as they become more familiar.
+Commands are grouped by topic. Use Quick Navigation to choose a category, then its Command Index to find an entry.
+
+Learning status is tracked separately from topic: Currently Learning, Familiar Commands, Mastered Commands, or Reference Commands. All existing entries remain Currently Learning; change an entry's status only after user approval.
 
 ---
 
-# Understanding PowerShell Aliases
+# Terminal / PowerShell
+
+## Command Index: Terminal / PowerShell
+
+- [Understanding PowerShell Aliases](#understanding-powershell-aliases)
+- [Locate an Installed Program (Get-ChildItem)](#locate-an-installed-program-get-childitem)
+- [Change Directory (Set-Location)](#change-directory-set-location)
+- [Display Current Directory (Get-Location)](#display-current-directory-get-location)
+- [Display the Complete Path of a File (Resolve-Path)](#display-the-complete-path-of-a-file-resolve-path)
+- [Create Files and Directories (New-Item and mkdir)](#create-files-and-directories-new-item-and-mkdir)
+- [Delete Files (Remove-Item)](#delete-files-remove-item)
+- [Search Python Files for a Function or Text](#search-python-files-for-a-function-or-text)
+- [Display a File in the Terminal](#display-a-file-in-the-terminal)
+- [Display the Beginning of a File](#display-the-beginning-of-a-file)
+- [Display a Specific Portion of a File](#display-a-specific-portion-of-a-file)
+- [Display Matching Text with Surrounding Context](#display-matching-text-with-surrounding-context)
+
+Learning status for the entries in this category: **Currently Learning**.
+
+[Back to categories](#quick-navigation)
+
+---
+
+## Understanding PowerShell Aliases
 
 Many PowerShell commands have shorter aliases.
 
@@ -81,322 +93,6 @@ Learning both the alias and the full cmdlet makes it easier to:
 - Understand Microsoft documentation
 - Write your own scripts
 - Troubleshoot commands
-
----
-
-# 🔥 Currently Learning
-
----
-
-## Create and Connect a GitHub Repository (gh repo create)
-
-### Purpose
-
-Create a GitHub repository from an existing local Git repository and configure
-the local `origin` remote without using the GitHub website.
-
----
-
-### Alias
-
-None
-
----
-
-### Full Command
-
-```powershell
-gh repo create <project-name> --private --source=. --remote=origin
-```
-
-Use `--public` instead of `--private` when the repository should be publicly
-visible.
-
----
-
-### General Pattern
-
-Run these commands from the new project directory:
-
-```powershell
-git init -b main
-gh auth status
-gh repo create <project-name> <visibility-flag> --source=. --remote=origin
-```
-
-Replace `<visibility-flag>` with either `--private` or `--public`.
-
-Create the initial commit, then publish it:
-
-```powershell
-git push -u origin main
-```
-
----
-
-### Real-World Example
-
-Create the public Recipe Dashboard repository from its empty local Git
-repository:
-
-```powershell
-gh repo create recipe-dashboard --public --source=. --remote=origin
-```
-
-The successful command created:
-
-```text
-https://github.com/RJPrioleau/recipe-dashboard
-```
-
-It also added this local remote:
-
-```text
-origin  https://github.com/RJPrioleau/recipe-dashboard.git
-```
-
----
-
-### Breakdown
-
-`gh repo create <project-name>`
-
-Creates a new repository under the active GitHub account.
-
-`--private` or `--public`
-
-Sets the GitHub repository's visibility.
-
-`--source=.`
-
-Uses the current local Git repository as the source. The `.` represents the
-current directory.
-
-`--remote=origin`
-
-Adds the created GitHub repository as the local remote named `origin`.
-
-`git push -u origin main`
-
-Publishes the first commit and configures local `main` to track `origin/main`.
-Afterward, later pushes can normally use `git push`.
-
----
-
-### Verification
-
-Confirm GitHub CLI authentication before creating the repository:
-
-```powershell
-gh auth status
-```
-
-Confirm the local fetch and push URLs:
-
-```powershell
-git remote -v
-```
-
-Confirm the repository identity, visibility, and URL on GitHub:
-
-```powershell
-gh repo view --json nameWithOwner,visibility,url
-```
-
-After the first push, confirm the default branch:
-
-```powershell
-gh repo view --json nameWithOwner,visibility,defaultBranchRef
-```
-
-Confirm the local branch is synchronized:
-
-```powershell
-git status
-```
-
----
-
-### Common Mistakes
-
-- Running the command outside the intended local repository.
-- Selecting `--public` when the repository should be private, or the reverse.
-- Omitting `--source=.` and failing to associate the current repository.
-- Omitting `--remote=origin` and leaving the local repository without a remote.
-- Including `--push` before an initial commit exists.
-- Running `git push` before upstream tracking exists. Use
-  `git push -u origin main` for the first push.
-- Copying the PowerShell prompt text, such as `PS C:\...>`, as part of a command.
-- Sharing the authentication token printed by `gh auth status`. Redact the token
-  before sharing terminal output.
-
----
-
-### When I Use It
-
-- Starting a new repository entirely from PowerShell.
-- Creating and connecting GitHub without using the website.
-- Choosing repository visibility explicitly during project setup.
-- Verifying the local-to-remote connection before the first commit is pushed.
-
----
-
-### Related Commands
-
-```powershell
-gh --version
-gh auth status
-git init -b main
-git remote -v
-git push -u origin main
-git status
-```
-
----
-
-### Lo Notes
-
-This workflow was verified while creating `recipe-dashboard`. The main lesson
-is that `gh repo create` can create the GitHub repository and configure the
-local remote in one command. The first commit is still created with Git, and
-the first push uses `-u` to establish upstream tracking.
-
----
-
-## Open a Project in PyCharm
-
-### Purpose
-
-Launch an existing project directly from PowerShell without opening PyCharm first.
-
----
-
-### Alias
-
-None
-
----
-
-### Full Command
-
-```powershell
-pycharm64.exe
-```
-
----
-
-### General Pattern
-
-```powershell
-pycharm64.exe <project_path>
-```
-
----
-
-### Example
-
-Open the current directory as a PyCharm project.
-
-```powershell
-pycharm64.exe .
-```
-
-Open a specific project.
-
-```powershell
-pycharm64.exe C:\Users\Jaypr\Python-Projects\developer-playbook
-```
-
----
-
-### Breakdown
-
-`pycharm64.exe`
-
-Launches the native PyCharm executable.
-
-`.`
-
-Represents the current working directory.
-
----
-
-### Requirements
-
-The PyCharm **bin** directory must be added to the Windows **Path**
-environment variable.
-
-Example:
-
-```text
-C:\Program Files\JetBrains\PyCharm 2023.3.4\bin
-```
-
----
-
-### Common Mistakes
-
-❌ Running
-
-```powershell
-pycharm .
-```
-
-before configuring the launcher.
-
-❌ Running
-
-```powershell
-pycharm.bat .
-```
-
-The batch launcher works but keeps the PowerShell session attached.
-
-PyCharm recommends using the native executable instead.
-
-❌ Updating PATH using
-
-```powershell
-setx PATH "$env:Path"
-```
-
-This may truncate the PATH variable because of Windows length limitations.
-
-Instead:
-
-System Properties → Environment Variables → Path → Edit
-
----
-
-### When I Use It
-
-- Opening existing projects
-- Starting new projects
-- Quickly jumping into development from PowerShell
-
----
-
-### Related Commands
-
-```powershell
-cd
-pwd
-ii
-```
-
----
-
-### Lo Notes
-
-This was the first command documented in the Developer Playbook.
-
-Lessons learned:
-
-- `pycharm` was not recognized.
-- `charm` was not available.
-- `pycharm.bat` worked but tied up the PowerShell session.
-- The native executable (`pycharm64.exe`) provides a better workflow.
-- The correct solution was adding PyCharm's **bin** directory to the Windows PATH using the Environment Variables editor.
 
 ---
 
@@ -1381,90 +1077,6 @@ Use the full version while learning how the command works. Use the aliases when 
 
 ---
 
-## Open a Specific File in PyCharm
-
-### 🎯 Purpose
-
-Open a specific project file directly from PowerShell.
-
-### ⚙️ What It Does
-
-Launches PyCharm and opens the file at the supplied path.
-
-### 🤔 Why It Matters
-
-Useful after locating a file through PowerShell and wanting to begin editing it immediately without navigating through the PyCharm project panel.
-
-### 📌 Alias
-
-None.
-
-### 💻 Full Command
-
-```powershell
-pycharm64.exe
-```
-
-### 📖 General Pattern
-
-```powershell
-pycharm64.exe <file-path>
-```
-
-### 📝 Example
-
-```powershell
-pycharm64.exe .\analysis\recommendation_engine.py
-```
-
-### 🔍 Breakdown
-
-**`pycharm64.exe`**
-
-Launches the native PyCharm executable.
-
-**`.\`**
-
-Represents the current directory.
-
-**`analysis\recommendation_engine.py`**
-
-The relative path to the file being opened.
-
-### ⚠️ Common Mistakes
-
-The PyCharm `bin` directory must be included in the Windows `PATH` environment variable.
-
-The command must also be run from a location where the relative file path is valid.
-
-### 🔗 Related Commands
-
-```powershell
-pycharm64.exe .
-pwd
-Get-ChildItem
-```
-
-### 💡 Lo Notes
-
-Use:
-
-```powershell
-pycharm64.exe .
-```
-
-to open the entire current project.
-
-Use:
-
-```powershell
-pycharm64.exe <file-path>
-```
-
-to open one specific file.
-
----
-
 ## Display a File in the Terminal
 
 ### 🎯 Purpose
@@ -1774,39 +1386,257 @@ It can be combined with the project-wide search workflow:
 
 ---
 
-## Workflow: Locate, Inspect, and Open Code
+[Back to categories](#quick-navigation)
+
+
+# PyCharm
+
+## Command Index: PyCharm
+
+- [Open a Project in PyCharm](#open-a-project-in-pycharm)
+- [Open a Specific File in PyCharm](#open-a-specific-file-in-pycharm)
+
+Learning status for the entries in this category: **Currently Learning**.
+
+[Back to categories](#quick-navigation)
+
+---
+
+## Open a Project in PyCharm
+
+### Purpose
+
+Launch an existing project directly from PowerShell without opening PyCharm first.
+
+---
+
+### Alias
+
+None
+
+---
+
+### Full Command
+
+```powershell
+pycharm64.exe
+```
+
+---
+
+### General Pattern
+
+```powershell
+pycharm64.exe <project_path>
+```
+
+---
+
+### Example
+
+Open the current directory as a PyCharm project.
+
+```powershell
+pycharm64.exe .
+```
+
+Open a specific project.
+
+```powershell
+pycharm64.exe C:\Users\Jaypr\Python-Projects\developer-playbook
+```
+
+---
+
+### Breakdown
+
+`pycharm64.exe`
+
+Launches the native PyCharm executable.
+
+`.`
+
+Represents the current working directory.
+
+---
+
+### Requirements
+
+The PyCharm **bin** directory must be added to the Windows **Path**
+environment variable.
+
+Example:
+
+```text
+C:\Program Files\JetBrains\PyCharm 2023.3.4\bin
+```
+
+---
+
+### Common Mistakes
+
+❌ Running
+
+```powershell
+pycharm .
+```
+
+before configuring the launcher.
+
+❌ Running
+
+```powershell
+pycharm.bat .
+```
+
+The batch launcher works but keeps the PowerShell session attached.
+
+PyCharm recommends using the native executable instead.
+
+❌ Updating PATH using
+
+```powershell
+setx PATH "$env:Path"
+```
+
+This may truncate the PATH variable because of Windows length limitations.
+
+Instead:
+
+System Properties → Environment Variables → Path → Edit
+
+---
+
+### When I Use It
+
+- Opening existing projects
+- Starting new projects
+- Quickly jumping into development from PowerShell
+
+---
+
+### Related Commands
+
+```powershell
+cd
+pwd
+ii
+```
+
+---
+
+### Lo Notes
+
+This was the first command documented in the Developer Playbook.
+
+Lessons learned:
+
+- `pycharm` was not recognized.
+- `charm` was not available.
+- `pycharm.bat` worked but tied up the PowerShell session.
+- The native executable (`pycharm64.exe`) provides a better workflow.
+- The correct solution was adding PyCharm's **bin** directory to the Windows PATH using the Environment Variables editor.
+
+---
+
+## Open a Specific File in PyCharm
 
 ### 🎯 Purpose
 
-Find code anywhere in a project, inspect the relevant section in PowerShell, and then open the file for editing.
+Open a specific project file directly from PowerShell.
 
-### Step 1 — Locate the Function
+### ⚙️ What It Does
+
+Launches PyCharm and opens the file at the supplied path.
+
+### 🤔 Why It Matters
+
+Useful after locating a file through PowerShell and wanting to begin editing it immediately without navigating through the PyCharm project panel.
+
+### 📌 Alias
+
+None.
+
+### 💻 Full Command
 
 ```powershell
-Get-ChildItem -Path . -Recurse -File -Filter *.py |
-    Select-String -Pattern "def get_basic_recommendation"
+pycharm64.exe
 ```
 
-### Step 2 — Inspect the Function
+### 📖 General Pattern
 
 ```powershell
-Select-String `
-    -Path .\analysis\recommendation_engine.py `
-    -Pattern "def get_basic_recommendation" `
-    -Context 0,90
+pycharm64.exe <file-path>
 ```
 
-### Step 3 — Open the File
+### 📝 Example
 
 ```powershell
 pycharm64.exe .\analysis\recommendation_engine.py
 ```
 
+### 🔍 Breakdown
+
+**`pycharm64.exe`**
+
+Launches the native PyCharm executable.
+
+**`.\`**
+
+Represents the current directory.
+
+**`analysis\recommendation_engine.py`**
+
+The relative path to the file being opened.
+
+### ⚠️ Common Mistakes
+
+The PyCharm `bin` directory must be included in the Windows `PATH` environment variable.
+
+The command must also be run from a location where the relative file path is valid.
+
+### 🔗 Related Commands
+
+```powershell
+pycharm64.exe .
+pwd
+Get-ChildItem
+```
+
 ### 💡 Lo Notes
 
-Use the commands together instead of relying on the GUI to search, scroll, and locate code manually.
+Use:
 
-This workflow improves both PowerShell repetition and familiarity with the project structure.
+```powershell
+pycharm64.exe .
+```
+
+to open the entire current project.
+
+Use:
+
+```powershell
+pycharm64.exe <file-path>
+```
+
+to open one specific file.
+
+---
+
+[Back to categories](#quick-navigation)
+
+
+# Python
+
+## Command Index: Python
+
+- [Check a Python File for Syntax Errors (python -m py_compile)](#check-a-python-file-for-syntax-errors-python--m-py_compile)
+- [Run a Python Function from PowerShell](#run-a-python-function-from-powershell)
+- [Run Multiline Python from PowerShell](#run-multiline-python-from-powershell)
+
+Learning status for the entries in this category: **Currently Learning**.
+
+[Back to categories](#quick-navigation)
 
 ---
 
@@ -2236,32 +2066,245 @@ before Python receives it.
 
 ---
 
-# 🟨 Familiar Commands
+[Back to categories](#quick-navigation)
 
-*(Commands move here as they become familiar.)*
 
----
+# Git / GitHub
 
-# 🟩 Mastered Commands
+## Command Index: Git / GitHub
 
-*(Commands move here once they become second nature.)*
+- [Create and Connect a GitHub Repository (gh repo create)](#create-and-connect-a-github-repository-gh-repo-create)
 
----
+Learning status for the entries in this category: **Currently Learning**.
 
-# 📚 Reference Commands
-
-*(Rare or infrequently used commands that are still worth documenting.)*
+[Back to categories](#quick-navigation)
 
 ---
 
-# 🔄 Common Workflows
+## Create and Connect a GitHub Repository (gh repo create)
 
-*(Document multi-step development workflows here.)*
+### Purpose
 
-Examples:
+Create a GitHub repository from an existing local Git repository and configure
+the local `origin` remote without using the GitHub website.
 
-- Starting a new project
-- Git workflow
-- Running a simulation
-- Debugging a module
-- Replaying historical data
+---
+
+### Alias
+
+None
+
+---
+
+### Full Command
+
+```powershell
+gh repo create <project-name> --private --source=. --remote=origin
+```
+
+Use `--public` instead of `--private` when the repository should be publicly
+visible.
+
+---
+
+### General Pattern
+
+Run these commands from the new project directory:
+
+```powershell
+git init -b main
+gh auth status
+gh repo create <project-name> <visibility-flag> --source=. --remote=origin
+```
+
+Replace `<visibility-flag>` with either `--private` or `--public`.
+
+Create the initial commit, then publish it:
+
+```powershell
+git push -u origin main
+```
+
+---
+
+### Real-World Example
+
+Create the public Recipe Dashboard repository from its empty local Git
+repository:
+
+```powershell
+gh repo create recipe-dashboard --public --source=. --remote=origin
+```
+
+The successful command created:
+
+```text
+https://github.com/RJPrioleau/recipe-dashboard
+```
+
+It also added this local remote:
+
+```text
+origin  https://github.com/RJPrioleau/recipe-dashboard.git
+```
+
+---
+
+### Breakdown
+
+`gh repo create <project-name>`
+
+Creates a new repository under the active GitHub account.
+
+`--private` or `--public`
+
+Sets the GitHub repository's visibility.
+
+`--source=.`
+
+Uses the current local Git repository as the source. The `.` represents the
+current directory.
+
+`--remote=origin`
+
+Adds the created GitHub repository as the local remote named `origin`.
+
+`git push -u origin main`
+
+Publishes the first commit and configures local `main` to track `origin/main`.
+Afterward, later pushes can normally use `git push`.
+
+---
+
+### Verification
+
+Confirm GitHub CLI authentication before creating the repository:
+
+```powershell
+gh auth status
+```
+
+Confirm the local fetch and push URLs:
+
+```powershell
+git remote -v
+```
+
+Confirm the repository identity, visibility, and URL on GitHub:
+
+```powershell
+gh repo view --json nameWithOwner,visibility,url
+```
+
+After the first push, confirm the default branch:
+
+```powershell
+gh repo view --json nameWithOwner,visibility,defaultBranchRef
+```
+
+Confirm the local branch is synchronized:
+
+```powershell
+git status
+```
+
+---
+
+### Common Mistakes
+
+- Running the command outside the intended local repository.
+- Selecting `--public` when the repository should be private, or the reverse.
+- Omitting `--source=.` and failing to associate the current repository.
+- Omitting `--remote=origin` and leaving the local repository without a remote.
+- Including `--push` before an initial commit exists.
+- Running `git push` before upstream tracking exists. Use
+  `git push -u origin main` for the first push.
+- Copying the PowerShell prompt text, such as `PS C:\...>`, as part of a command.
+- Sharing the authentication token printed by `gh auth status`. Redact the token
+  before sharing terminal output.
+
+---
+
+### When I Use It
+
+- Starting a new repository entirely from PowerShell.
+- Creating and connecting GitHub without using the website.
+- Choosing repository visibility explicitly during project setup.
+- Verifying the local-to-remote connection before the first commit is pushed.
+
+---
+
+### Related Commands
+
+```powershell
+gh --version
+gh auth status
+git init -b main
+git remote -v
+git push -u origin main
+git status
+```
+
+---
+
+### Lo Notes
+
+This workflow was verified while creating `recipe-dashboard`. The main lesson
+is that `gh repo create` can create the GitHub repository and configure the
+local remote in one command. The first commit is still created with Git, and
+the first push uses `-u` to establish upstream tracking.
+
+---
+
+[Back to categories](#quick-navigation)
+
+
+# Workflows
+
+## Command Index: Workflows
+
+- [Workflow: Locate, Inspect, and Open Code](#workflow-locate-inspect-and-open-code)
+
+Learning status for the entries in this category: **Currently Learning**.
+
+[Back to categories](#quick-navigation)
+
+---
+
+## Workflow: Locate, Inspect, and Open Code
+
+### 🎯 Purpose
+
+Find code anywhere in a project, inspect the relevant section in PowerShell, and then open the file for editing.
+
+### Step 1 — Locate the Function
+
+```powershell
+Get-ChildItem -Path . -Recurse -File -Filter *.py |
+    Select-String -Pattern "def get_basic_recommendation"
+```
+
+### Step 2 — Inspect the Function
+
+```powershell
+Select-String `
+    -Path .\analysis\recommendation_engine.py `
+    -Pattern "def get_basic_recommendation" `
+    -Context 0,90
+```
+
+### Step 3 — Open the File
+
+```powershell
+pycharm64.exe .\analysis\recommendation_engine.py
+```
+
+### 💡 Lo Notes
+
+Use the commands together instead of relying on the GUI to search, scroll, and locate code manually.
+
+This workflow improves both PowerShell repetition and familiarity with the project structure.
+
+---
+
+[Back to categories](#quick-navigation)
